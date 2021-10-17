@@ -1,0 +1,5 @@
+mypy
+black
+wheel
+web3
+jsonschema
