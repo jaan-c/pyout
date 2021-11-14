@@ -43,7 +43,9 @@ def get_jwt(
             json=payload,
         )
     except RetryError as e:
-        raise AxieGraphQlException("failed to get JWT") from e
+        raise AxieGraphQlException(
+            f"failed to get JWT for account {address.p_0x}"
+        ) from e
 
     if 200 <= response.status_code <= 299:
         json_data = response.json()["data"]
