@@ -3,3 +3,4 @@ black
 wheel
 web3
 jsonschema
+types-requests
