@@ -3,7 +3,7 @@ import requests
 from requests.exceptions import RetryError
 from web3 import Web3
 
-from pyout.ronin_utils import Address
+from pyout.ronin import Address
 from pyout import consts
 
 
@@ -15,9 +15,9 @@ class AxieGraphQlException(Exception):
 
 
 def get_jwt(
-    request: requests.Session, address: Address, private_key: str
+    session: requests.Session, address: Address, private_key: str
 ) -> str:
-    message = __create_random_message(request)
+    message = __create_random_message(session)
     signature = Web3().eth.account.sign_message(
         encode_defunct(text=message), private_key=private_key
     )
@@ -37,7 +37,7 @@ def get_jwt(
     }
 
     try:
-        response = request.post(
+        response = session.post(
             AXIE_GRAPHQL_URL,
             headers={"User-Agent": consts.USER_AGENT},
             json=payload,
@@ -61,7 +61,7 @@ def get_jwt(
         )
 
 
-def __create_random_message(request: requests.Session) -> str:
+def __create_random_message(session: requests.Session) -> str:
     payload = {
         "operationName": "CreateRandomMessage",
         "variables": {},
@@ -69,7 +69,7 @@ def __create_random_message(request: requests.Session) -> str:
     }
 
     try:
-        response = request.post(AXIE_GRAPHQL_URL, json=payload)
+        response = session.post(AXIE_GRAPHQL_URL, json=payload)
     except RetryError as e:
         raise AxieGraphQlException("failed to get random message") from e
 
