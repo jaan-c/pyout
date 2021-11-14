@@ -47,16 +47,20 @@ def get_jwt(
             f"failed to get JWT for account {address.p_0x}"
         ) from e
 
-    if 200 <= response.status_code <= 299:
-        json_data = response.json()["data"]
-        if json_data.get("createAccessTokenWithSignature") and json_data[
-            "createAccessTokenWithSignature"
-        ].get("accessToken"):
-            return json_data["createAccessTokenWithSignature"]["accessToken"]
-        else:
+    if response.status_code in range(200, 300):
+        access_token = (
+            response.json()
+            .get("data", {})
+            .get("createAccessTokenWithSignature", {})
+            .get("accessToken")
+        )
+
+        if not access_token:
             raise AxieGraphQlException(
                 f"failed to get JWT, private key may be wrong for account {address.p_0x}"
             )
+        else:
+            return access_token
     else:
         raise AxieGraphQlException(
             f"unexpected response {response.status_code}: {response.content.decode()}"
@@ -75,7 +79,7 @@ def __create_random_message(session: requests.Session) -> str:
     except RetryError as e:
         raise AxieGraphQlException("failed to get random message") from e
 
-    if 200 <= response.status_code <= 299:
+    if response.status_code in range(200, 300):
         return response.json()["data"]["createRandomMessage"]
     else:
         raise AxieGraphQlException(
