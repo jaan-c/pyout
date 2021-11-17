@@ -9,6 +9,7 @@ from web3.types import Wei
 from pyout import ronin
 from pyout import consts
 from pyout import axieql
+from pyout import abi
 
 
 class ClaimException(Exception):
@@ -55,7 +56,7 @@ async def claim_slp(
     w3 = Web3(Web3.HTTPProvider(consts.RONIN_PROVIDER_FREE))
     slp_contract = w3.eth.contract(
         address=Web3.toChecksumAddress(consts.SLP_CONTRACT_ADDRESS),
-        abi=__make_slp_abi(),
+        abi=abi.make_slp_abi(),
     )
     claim = slp_contract.functions.checkpoint(
         Web3.toChecksumAddress(address.p_0x),
@@ -104,75 +105,3 @@ def __has_unclaimed_slp(
         raise ClaimException(
             f"unexpected response {response.status_code}: {response.content.decode()}"
         )
-
-
-def __make_slp_abi() -> Any:
-    return [
-        {
-            "constant": False,
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "_owner",
-                    "type": "address",
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "_amount",
-                    "type": "uint256",
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "_createdAt",
-                    "type": "uint256",
-                },
-                {
-                    "internalType": "bytes",
-                    "name": "_signature",
-                    "type": "bytes",
-                },
-            ],
-            "name": "checkpoint",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_balance",
-                    "type": "uint256",
-                }
-            ],
-            "payable": False,
-            "stateMutability": "nonpayable",
-            "type": "function",
-        },
-        {
-            "constant": True,
-            "inputs": [
-                {"internalType": "address", "name": "", "type": "address"}
-            ],
-            "name": "balanceOf",
-            "outputs": [
-                {"internalType": "uint256", "name": "", "type": "uint256"}
-            ],
-            "payable": False,
-            "stateMutability": "view",
-            "type": "function",
-        },
-        {
-            "constant": False,
-            "inputs": [
-                {"internalType": "address", "name": "_to", "type": "address"},
-                {
-                    "internalType": "uint256",
-                    "name": "_value",
-                    "type": "uint256",
-                },
-            ],
-            "name": "transfer",
-            "outputs": [
-                {"internalType": "bool", "name": "_success", "type": "bool"}
-            ],
-            "payable": False,
-            "stateMutability": "nonpayable",
-            "type": "function",
-        },
-    ]
