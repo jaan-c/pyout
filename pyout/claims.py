@@ -77,9 +77,7 @@ async def claim_slp(
     while True:
         try:
             receipt = w3.eth.get_transaction_receipt(transaction_hash)
-            if receipt["status"] == 1:
-                break
-            else:
+            if receipt["status"] != 1:
                 raise ClaimException(
                     f"claim transaction failed for account {address.p_0x}"
                 )
