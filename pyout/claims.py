@@ -31,7 +31,7 @@ async def claim_slp(
         raise ClaimException("failed to get JWT") from e
 
     try:
-        url = f"https://game-api.skymavis.com/game-api/clients/{address.p_0x}/items/1/claim"
+        url = f"https://game-api.skymavis.com/game-api/clients/{address}/items/1/claim"
         headers = {
             "User-Agent": consts.USER_AGENT,
             "Authorization": f"Bearer {jwt}",
@@ -39,7 +39,7 @@ async def claim_slp(
         response = session.post(url, headers=headers)
     except RetryError as e:
         raise ClaimException(
-            f"failed to claim SLP for account {address.p_0x}"
+            f"failed to claim SLP for account {address}"
         ) from e
 
     if response.status_code not in range(200, 300):
@@ -50,7 +50,7 @@ async def claim_slp(
     signature = response.json().get("blockchain_related", {}).get("signature")
     if not signature:
         raise ClaimException(
-            f"response returned no signature for account {address.p_0x}"
+            f"response returned no signature for account {address}"
         )
     nonce = ronin.get_nonce(address)
     w3 = Web3(Web3.HTTPProvider(consts.RONIN_PROVIDER_FREE))
@@ -79,7 +79,7 @@ async def claim_slp(
             receipt = w3.eth.get_transaction_receipt(transaction_hash)
             if receipt["status"] != 1:
                 raise ClaimException(
-                    f"claim transaction failed for account {address.p_0x}"
+                    f"claim transaction failed for account {address}"
                 )
         except exceptions.TransactionNotFound as e:
             await asyncio.sleep(5)
@@ -88,9 +88,7 @@ async def claim_slp(
 def __has_unclaimed_slp(
     session: requests.Session, address: ronin.Address
 ) -> int:
-    url = (
-        f"https://game-api.skymavis.com/game-api/clients/{address.p_0x}/items/1"
-    )
+    url = f"https://game-api.skymavis.com/game-api/clients/{address}/items/1"
 
     try:
         response = session.get(url, headers={"User-Agent": consts.USER_AGENT})

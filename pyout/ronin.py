@@ -27,6 +27,9 @@ class Address:
 
         self.hex_part = matches.group(1)
 
+    def __str__(self) -> str:
+        return self.p_0x
+
 
 def get_nonce(address: Address) -> Nonce:
     """Returns the number of confirmed transaction sent by this account. Used
