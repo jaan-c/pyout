@@ -53,7 +53,17 @@ async def claim_slp(
             f"response returned no signature for account {address}"
         )
     nonce = ronin.get_nonce(address)
-    w3 = Web3(Web3.HTTPProvider(consts.RONIN_PROVIDER_FREE))
+    w3 = Web3(
+        Web3.HTTPProvider(
+            consts.RONIN_PROVIDER_FREE,
+            request_kwargs={
+                "headers": {
+                    "Content-Type": "application/json",
+                    "User-Agent": consts.USER_AGENT,
+                }
+            },
+        )
+    )
     slp_contract = w3.eth.contract(
         address=Web3.toChecksumAddress(consts.SLP_CONTRACT_ADDRESS),
         abi=abi.make_slp_abi(),
@@ -63,9 +73,7 @@ async def claim_slp(
         signature["amount"],
         signature["timestamp"],
         signature["signature"],
-    ).buildTransaction(
-        {"gas": Wei(1000000), "gasPrice": Wei(0), "nonce": nonce}
-    )
+    ).buildTransaction({"gas": Wei(492874), "gasPrice": Wei(0), "nonce": nonce})
     signed_claim = w3.eth.account.sign_transaction(
         claim, private_key=private_key
     )

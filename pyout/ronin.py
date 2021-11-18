@@ -35,7 +35,17 @@ def get_nonce(address: Address) -> Nonce:
     """Returns the number of confirmed transaction sent by this account. Used
     for letting miners know the order of transactions."""
 
-    w3 = Web3(Web3.HTTPProvider(consts.RONIN_PROVIDER_FREE))
+    w3 = Web3(
+        Web3.HTTPProvider(
+            consts.RONIN_PROVIDER_FREE,
+            request_kwargs={
+                "headers": {
+                    "Content-Type": "application/json",
+                    "User-Agent": consts.USER_AGENT,
+                }
+            },
+        )
+    )
     nonce = w3.eth.get_transaction_count(Web3.toChecksumAddress(address.p_0x))
 
     return nonce
@@ -43,7 +53,17 @@ def get_nonce(address: Address) -> Nonce:
 
 def check_balance(address: Address) -> int:
     """Returns the (claimed) SLP balance of address."""
-    w3 = Web3(Web3.HTTPProvider(consts.RONIN_PROVIDER))
+    w3 = Web3(
+        Web3.HTTPProvider(
+            consts.RONIN_PROVIDER,
+            request_kwargs={
+                "headers": {
+                    "Content-Type": "application/json",
+                    "User-Agent": consts.USER_AGENT,
+                }
+            },
+        )
+    )
     contract = w3.eth.contract(
         address=Web3.toChecksumAddress(consts.SLP_CONTRACT_ADDRESS),
         abi=__make_balance_abi(),
