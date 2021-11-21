@@ -3,7 +3,7 @@ import requests
 from requests.exceptions import RetryError
 from web3 import Web3
 
-from pyout.ronin import Address
+from pyout.domain import Address
 from pyout import consts
 
 

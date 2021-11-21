@@ -10,6 +10,7 @@ from pyout import ronin
 from pyout import consts
 from pyout import axieql
 from pyout import abi
+from pyout import domain
 
 
 class ClaimException(Exception):
@@ -18,7 +19,7 @@ class ClaimException(Exception):
 
 async def claim_slp(
     session: requests.Session,
-    address: ronin.Address,
+    address: domain.Address,
     private_key: str,
 ) -> None:
     unclaimed_balance = __has_unclaimed_slp(session, address)
@@ -94,7 +95,7 @@ async def claim_slp(
 
 
 def __has_unclaimed_slp(
-    session: requests.Session, address: ronin.Address
+    session: requests.Session, address: domain.Address
 ) -> int:
     url = f"https://game-api.skymavis.com/game-api/clients/{address}/items/1"
 

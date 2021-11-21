@@ -4,10 +4,10 @@ import asyncio
 from web3 import Web3, exceptions
 from web3.types import Wei
 
-from pyout.ronin import Address
 from pyout import consts
 from pyout import abi
 from pyout import ronin
+from pyout import domain
 
 
 class SendException(Exception):
@@ -15,9 +15,9 @@ class SendException(Exception):
 
 
 async def send_slp(
-    from_address: Address,
+    from_address: domain.Address,
     from_private_key: str,
-    to_address: Address,
+    to_address: domain.Address,
     amount: int,
 ) -> None:
     w3 = Web3(
