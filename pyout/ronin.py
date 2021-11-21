@@ -1,37 +1,13 @@
 from typing import *
 
-import re
 from web3 import Web3
 from web3.types import Nonce
 
 from pyout import consts
+from pyout import domain
 
 
-class Address:
-    """A prefix agnostic Ronin wallet address."""
-
-    hex_part: str
-
-    @property
-    def p_0x(self) -> str:
-        return "0x" + self.hex_part
-
-    @property
-    def p_ronin(self) -> str:
-        return "ronin:" + self.hex_part
-
-    def __init__(self, address: str):
-        matches = re.match(r"^(?:ronin:|0x)?([0-9A-Fa-f]{40})$", address)
-        if not matches:
-            raise ValueError(f"Invalid address {address}.")
-
-        self.hex_part = matches.group(1)
-
-    def __str__(self) -> str:
-        return self.p_0x
-
-
-def get_nonce(address: Address) -> Nonce:
+def get_nonce(address: domain.Address) -> Nonce:
     """Returns the number of confirmed transaction sent by this account. Used
     for letting miners know the order of transactions."""
 
@@ -51,7 +27,7 @@ def get_nonce(address: Address) -> Nonce:
     return nonce
 
 
-def check_balance(address: Address) -> int:
+def check_balance(address: domain.Address) -> int:
     """Returns the (claimed) SLP balance of address."""
     w3 = Web3(
         Web3.HTTPProvider(
