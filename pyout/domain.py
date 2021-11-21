@@ -49,6 +49,13 @@ class Payout:
                 f"player_percent must be between 0 to 1 got {player_percent}"
             )
 
+        assert isinstance(manager_address, Address)
+        assert isinstance(scholar_address, Address)
+        assert isinstance(scholar_private_key, str)
+        assert isinstance(player_name, str)
+        assert isinstance(player_address, Address)
+        assert isinstance(player_percent, float)
+
         self.manager_address = manager_address
         self.scholar_address = scholar_address
         self.scholar_private_key = scholar_private_key
