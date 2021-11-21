@@ -25,3 +25,33 @@ class Address:
 
     def __str__(self) -> str:
         return self.p_0x
+
+
+class Payout:
+    manager_address: Address
+    scholar_address: Address
+    scholar_private_key: str
+    player_name: str
+    player_address: Address
+    player_percent: float
+
+    def __init__(
+        self,
+        manager_address: Address,
+        scholar_address: Address,
+        scholar_private_key: str,
+        player_name: str,
+        player_address: Address,
+        player_percent: float,
+    ):
+        if not (0 <= player_percent <= 1):
+            raise ValueError(
+                f"player_percent must be between 0 to 1 got {player_percent}"
+            )
+
+        self.manager_address = manager_address
+        self.scholar_address = scholar_address
+        self.scholar_private_key = scholar_private_key
+        self.player_name = player_name
+        self.player_address = player_address
+        self.player_percent = player_percent
