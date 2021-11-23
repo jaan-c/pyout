@@ -3,8 +3,10 @@ from typing import *
 import asyncio
 import requests
 from requests.exceptions import RetryError
+from requests.adapters import HTTPAdapter
 from web3 import Web3, exceptions
 from web3.types import Wei
+from urllib3.util import Retry
 
 from pyout import ronin
 from pyout import consts
@@ -17,11 +19,16 @@ class ClaimException(Exception):
     pass
 
 
-async def claim_slp(
-    session: requests.Session,
-    address: domain.Address,
-    private_key: str,
-) -> None:
+async def claim_slp(address: domain.Address, private_key: str) -> None:
+    retries = Retry(
+        total=5,
+        backoff_factor=2,
+        status_forcelist=[500, 502, 503, 504],
+        allowed_methods={"GET", "POST"},
+    )
+    session = requests.Session()
+    session.mount("https://", HTTPAdapter(max_retries=retries))
+
     unclaimed_balance = __has_unclaimed_slp(session, address)
     if unclaimed_balance == 0:
         return
