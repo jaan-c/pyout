@@ -27,7 +27,7 @@ def get_nonce(address: domain.Address) -> Nonce:
     return nonce
 
 
-def check_balance(address: domain.Address) -> int:
+def get_balance(address: domain.Address) -> int:
     """Returns the (claimed) SLP balance of address."""
     w3 = Web3(
         Web3.HTTPProvider(
