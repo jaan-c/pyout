@@ -22,10 +22,6 @@ class ClaimException(Exception):
 async def claim_slp(address: domain.Address, private_key: str) -> None:
     session = __make_session()
 
-    unclaimed_balance = get_unclaimed_slp(address)
-    if unclaimed_balance == 0:
-        return
-
     try:
         jwt = axieql.get_jwt(session, address, private_key)
     except axieql.AxieGraphQlException as e:
