@@ -1,8 +1,8 @@
 from typing import *
 
-import asyncio
 from web3 import Web3, exceptions
 from web3.types import Wei
+import time
 
 from pyout import consts
 from pyout import abi
@@ -14,7 +14,7 @@ class SendException(Exception):
     pass
 
 
-async def send_slp(
+def send_slp(
     from_address: domain.Address,
     from_private_key: str,
     to_address: domain.Address,
@@ -61,4 +61,4 @@ async def send_slp(
                     f"transaction failed for account {from_address} -> {to_address}"
                 )
         except exceptions.TransactionNotFound:
-            await asyncio.sleep(10)
+            time.sleep(10)

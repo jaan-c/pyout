@@ -1,12 +1,12 @@
 from typing import *
 
-import asyncio
 import requests
 from requests.exceptions import RetryError
 from requests.adapters import HTTPAdapter
 from web3 import Web3, exceptions
 from web3.types import Wei
 from urllib3.util import Retry
+import time
 
 from pyout import ronin
 from pyout import consts
@@ -19,7 +19,7 @@ class ClaimException(Exception):
     pass
 
 
-async def claim_slp(address: domain.Address, private_key: str) -> None:
+def claim_slp(address: domain.Address, private_key: str) -> None:
     session = __make_session()
 
     try:
@@ -87,7 +87,7 @@ async def claim_slp(address: domain.Address, private_key: str) -> None:
                     f"claim transaction failed for account {address}"
                 )
         except exceptions.TransactionNotFound as e:
-            await asyncio.sleep(5)
+            time.sleep(5)
 
 
 def get_unclaimed_slp(address: domain.Address) -> int:
