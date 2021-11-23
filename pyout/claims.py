@@ -20,16 +20,9 @@ class ClaimException(Exception):
 
 
 async def claim_slp(address: domain.Address, private_key: str) -> None:
-    retries = Retry(
-        total=5,
-        backoff_factor=2,
-        status_forcelist=[500, 502, 503, 504],
-        allowed_methods={"GET", "POST"},
-    )
-    session = requests.Session()
-    session.mount("https://", HTTPAdapter(max_retries=retries))
+    session = __make_session()
 
-    unclaimed_balance = __has_unclaimed_slp(session, address)
+    unclaimed_balance = get_unclaimed_slp(address)
     if unclaimed_balance == 0:
         return
 
@@ -101,9 +94,9 @@ async def claim_slp(address: domain.Address, private_key: str) -> None:
             await asyncio.sleep(5)
 
 
-def __has_unclaimed_slp(
-    session: requests.Session, address: domain.Address
-) -> int:
+def get_unclaimed_slp(address: domain.Address) -> int:
+    session = __make_session()
+
     url = f"https://game-api.skymavis.com/game-api/clients/{address}/items/1"
 
     try:
@@ -117,3 +110,16 @@ def __has_unclaimed_slp(
         raise ClaimException(
             f"unexpected response {response.status_code}: {response.content.decode()}"
         )
+
+
+def __make_session() -> requests.Session:
+    retries = Retry(
+        total=5,
+        backoff_factor=2,
+        status_forcelist=[500, 502, 503, 504],
+        allowed_methods={"GET", "POST"},
+    )
+    session = requests.Session()
+    session.mount("https://", HTTPAdapter(max_retries=retries))
+
+    return session
