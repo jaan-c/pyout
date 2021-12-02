@@ -3,11 +3,13 @@ from typing import *
 from web3 import Web3, exceptions
 from web3.types import Wei
 import time
+import datetime
 
 from pyout import consts
 from pyout import abi
 from pyout import ronin
 from pyout import domain
+from pyout import utils
 
 
 class SendException(Exception):
@@ -19,6 +21,9 @@ def send_slp(
     from_private_key: str,
     to_address: domain.Address,
     amount: int,
+    timeout: datetime.timedelta = datetime.timedelta(minutes=10),
+    logger_func: Callable[[str], None] = print,
+    logger_prefix: str = "",
 ) -> None:
     w3 = Web3(
         Web3.HTTPProvider(
@@ -53,12 +58,20 @@ def send_slp(
     w3.eth.send_raw_transaction(signature.rawTransaction)
 
     transaction_hash = w3.toHex(w3.keccak(signature.rawTransaction))
-    while True:
+
+    for count in utils.countdown(timeout):
+        logger_func(f"{logger_prefix}Awaiting receipt ({count}/{timeout})")
         try:
             receipt = w3.eth.get_transaction_receipt(transaction_hash)
-            if receipt["status"] != 1:
+            if receipt["status"] == 1:
+                return
+            else:
                 raise SendException(
                     f"transaction failed for account {from_address} -> {to_address}"
                 )
         except exceptions.TransactionNotFound:
             time.sleep(10)
+    else:
+        raise SendException(
+            f"transaction timed out for account {from_address} -> {to_address} (nonce: {nonce})"
+        )
