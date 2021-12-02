@@ -4,6 +4,7 @@ import os
 import platform
 import logging
 import sys
+import time
 
 from pyout import config
 from pyout import claims
@@ -61,6 +62,7 @@ def main() -> None:
         logging.info(f"\tInitial Player Balance: {player_balance}")
 
         logging.info(f"\tSending {manager_cut} SLP from scholar to manager...")
+        logging.info(f"\t\t{p.scholar_address} -> {p.manager_address}")
         send.send_slp(
             from_address=p.scholar_address,
             from_private_key=p.scholar_private_key,
@@ -71,6 +73,7 @@ def main() -> None:
         )
 
         logging.info(f"\tSending {player_cut} SLP from scholar to player...")
+        logging.info(f"\t\t{p.scholar_address} -> {p.player_address}")
         send.send_slp(
             from_address=p.scholar_address,
             from_private_key=p.scholar_private_key,
