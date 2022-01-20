@@ -139,3 +139,4 @@ cython_debug/
 
 notes.txt
 pyout_config.json
+pyout_output.txt
